@@ -142,10 +142,5 @@ echo ECS_CLUSTER=${aws_ecs_cluster.main.name} >> /etc/ecs/ecs.config
 USER_DATA
   }
 
-  tags = {
-    Environment = "${var.environment}"
-    Application = "${var.app_name}"
-  }
-
   depends_on = ["aws_iam_policy_attachment.fleet"]
 }
