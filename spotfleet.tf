@@ -122,7 +122,7 @@ resource "aws_spot_fleet_request" "main" {
 #!/bin/bash
 set -eux
 mkdir -p /etc/ecs
-echo ECS_CLUSTER=${aws_ecs_cluster.main.name} >> /etc/ecs/ecs.config
+echo ECS_CLUSTER=${var.ecs_cluster_name} >> /etc/ecs/ecs.config
 export PATH=/usr/local/bin:$PATH
 yum -y install jq
 easy_install pip
@@ -183,7 +183,50 @@ USER_DATA
 
     user_data = <<USER_DATA
 #!/bin/bash
-echo ECS_CLUSTER=${aws_ecs_cluster.main.name} >> /etc/ecs/ecs.config
+set -eux
+mkdir -p /etc/ecs
+echo ECS_CLUSTER=${var.ecs_cluster_name} >> /etc/ecs/ecs.config
+export PATH=/usr/local/bin:$PATH
+yum -y install jq
+easy_install pip
+pip install awscli
+aws configure set default.region ${data.aws_region.current.name}
+
+cat <<EOF > /etc/init/spot-instance-termination-handler.conf
+description "Start spot instance termination handler monitoring script"
+author "BoltOps"
+start on started ecs
+script
+echo \$\$ > /var/run/spot-instance-termination-handler.pid
+exec /usr/local/bin/spot-instance-termination-handler.sh
+end script
+pre-start script
+logger "[spot-instance-termination-handler.sh]: spot instance termination
+notice handler started"
+end script
+EOF
+
+cat <<EOF > /usr/local/bin/spot-instance-termination-handler.sh
+#!/bin/bash
+while sleep 5; do
+if [ -z \$(curl -Isf http://169.254.169.254/latest/meta-data/spot/termination-time)]; then
+/bin/false
+else
+logger "[spot-instance-termination-handler.sh]: spot instance termination notice detected"
+STATUS=DRAINING
+ECS_CLUSTER=\$(curl -s http://localhost:51678/v1/metadata | jq .Cluster | tr -d \")
+CONTAINER_INSTANCE=\$(curl -s http://localhost:51678/v1/metadata | jq .ContainerInstanceArn | tr -d \")
+logger "[spot-instance-termination-handler.sh]: putting instance in state \$STATUS"
+
+/usr/local/bin/aws  ecs update-container-instances-state --cluster \$ECS_CLUSTER --container-instances \$CONTAINER_INSTANCE --status \$STATUS
+
+logger "[spot-instance-termination-handler.sh]: putting myself to sleep..."
+sleep 120 # exit loop as instance expires in 120 secs after terminating notification
+fi
+done
+EOF
+
+chmod +x /usr/local/bin/spot-instance-termination-handler.sh
 USER_DATA
   }
 

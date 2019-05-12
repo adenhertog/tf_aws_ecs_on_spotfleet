@@ -2,34 +2,12 @@
 
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-A terraform module for create ECS on Spot Fleet. This is a demo repository.
+A terraform module for creating Spot Fleet instances to attach to an existing ECS cluster. This is a demo repository.
 The outline is as following:
 
 * Bid on Spot Fleet and launch instances that spans two AZs.
 * Started instances constitute an ECS cluster.
 * Invoked containers support dynamic port mapping by ALB.
-
-## Quick Start
-
-By using the bundled ruby script, you can try ECS on Spot Fleet fastest.
-
-```
-$ git clone https://github.com/wata727/tf_aws_ecs_on_spotfleet.git
-$ cd tf_aws_ecs_on_spotfleet/cli
-$ bundle install
-$ ruby wizard.rb generate
-      create template.tf
-$ terraform init
-$ terraform apply
-```
-
-This script generates Terraform template. By default, it requests the cheapest spot price with the two subnets in default VPC on `us-east-1`. Also, if you do not have a key pair in us-east-1, it will automatically generate `demo-app.pem`. Since AWS credentials are required for this operation, please use environment variables or shared credentials.
-
-If you want to delete this cluster, please run the following:
-
-```
-$ terraform destroy
-```
 
 ## Module Input Variables
 
@@ -38,6 +16,7 @@ $ terraform destroy
 * `vpc` - VPC id for ECS cluster
 * `subnets` - List of subnet ids for ECS cluster, please choose 2 subnets
 * `key_name` - Name of key pair for SSH login to ECS cluster instances
+* `ecs_cluster_name` - Name of the ECS cluster to add spot instances to
 
 **Optional**
 

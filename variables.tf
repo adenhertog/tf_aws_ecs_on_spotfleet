@@ -23,6 +23,10 @@ variable "ami" {
   default     = "ami-eca289fb"
 }
 
+variable "ecs_cluster_name" {
+  description = "Name of the ECS cluster to add spot instances to"
+}
+
 // Customize for container options
 
 variable "app_name" {
