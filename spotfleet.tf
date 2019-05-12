@@ -1,6 +1,6 @@
 resource "aws_iam_instance_profile" "ecs" {
-  name  = "${var.app_name}-ecs-instance"
-  roles = ["${aws_iam_role.ecs_instance.name}"]
+  name = "${var.app_name}-ecs-instance"
+  role = "${aws_iam_role.ecs_instance.name}"
 }
 
 resource "aws_iam_policy_attachment" "ecs_instance" {
