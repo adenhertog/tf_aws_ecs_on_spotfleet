@@ -4,9 +4,14 @@ variable "vpc" {
   description = "VPC id for ECS cluster"
 }
 
-variable "subnets" {
-  type        = "list"
-  description = "List of subnet ids for ECS cluster, please choose 2 subnets"
+variable "subnet_a" {
+  type        = "string"
+  description = "First subnet for ECS cluster"
+}
+
+variable "subnet_b" {
+  type        = "string"
+  description = "Second subnet for ECS cluster"
 }
 
 variable "key_name" {

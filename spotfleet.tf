@@ -91,7 +91,7 @@ resource "aws_spot_fleet_request" "main" {
     ami                    = "${var.ami}"
     instance_type          = "${var.instance_type}"
     spot_price             = "${var.spot_prices[0]}"
-    subnet_id              = "${var.subnets[0]}"
+    subnet_id              = "${var.subnet_a}"
     vpc_security_group_ids = ["${aws_security_group.ecs_instance.id}"]
     iam_instance_profile   = "${aws_iam_instance_profile.ecs.name}"
     key_name               = "${var.key_name}"
@@ -111,7 +111,7 @@ USER_DATA
     ami                    = "${var.ami}"
     instance_type          = "${var.instance_type}"
     spot_price             = "${var.spot_prices[1]}"
-    subnet_id              = "${var.subnets[1]}"
+    subnet_id              = "${var.subnet_b}"
     vpc_security_group_ids = ["${aws_security_group.ecs_instance.id}"]
     iam_instance_profile   = "${aws_iam_instance_profile.ecs.name}"
     key_name               = "${var.key_name}"

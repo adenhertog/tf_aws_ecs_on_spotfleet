@@ -21,7 +21,7 @@ resource "aws_security_group" "ecs_alb" {
 
 resource "aws_alb" "main" {
   name            = "${var.app_name}"
-  subnets         = "${var.subnets}"
+  subnets         = ["${var.subnet_a}", "${var.subnet_b}"]
   security_groups = ["${aws_security_group.ecs_alb.id}"]
 }
 
@@ -32,7 +32,7 @@ resource "aws_alb_target_group" "main" {
   vpc_id   = "${var.vpc}"
 
   depends_on = [
-    "aws_alb.main"
+    "aws_alb.main",
   ]
 }
 
