@@ -17,12 +17,22 @@ resource "aws_security_group" "ecs_alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
+  }
 }
 
 resource "aws_alb" "main" {
   name            = "${var.app_name}"
   subnets         = ["${var.subnet_a}", "${var.subnet_b}"]
   security_groups = ["${aws_security_group.ecs_alb.id}"]
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
+  }
 }
 
 resource "aws_alb_target_group" "main" {
@@ -34,6 +44,11 @@ resource "aws_alb_target_group" "main" {
   depends_on = [
     "aws_alb.main",
   ]
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
+  }
 }
 
 resource "aws_alb_listener" "https" {

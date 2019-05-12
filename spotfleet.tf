@@ -28,6 +28,11 @@ resource "aws_iam_role" "ecs_instance" {
     ]
 }
 EOF
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
+  }
 }
 
 resource "aws_security_group" "ecs_instance" {
@@ -47,6 +52,11 @@ resource "aws_security_group" "ecs_instance" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
   }
 }
 
@@ -77,6 +87,11 @@ resource "aws_iam_role" "fleet" {
   ]
 }
 EOF
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
+  }
 }
 
 resource "aws_spot_fleet_request" "main" {
@@ -128,4 +143,9 @@ USER_DATA
   }
 
   depends_on = ["aws_iam_policy_attachment.fleet"]
+
+  tags = {
+    Environment = "${var.environment}"
+    Application = "${var.app_name}"
+  }
 }

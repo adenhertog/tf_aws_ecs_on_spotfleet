@@ -30,6 +30,11 @@ variable "app_name" {
   default     = "demo-app"
 }
 
+variable "environment" {
+  description = "Environment to tag against created resources"
+  default     = "unknown"
+}
+
 variable "https" {
   description = "Listen over https"
   default     = false
