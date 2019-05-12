@@ -144,7 +144,7 @@ USER_DATA
 
   depends_on = ["aws_iam_policy_attachment.fleet"]
 
-  tags = {
+  tags {
     Environment = "${var.environment}"
     Application = "${var.app_name}"
   }
