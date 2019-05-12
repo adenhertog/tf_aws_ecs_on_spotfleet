@@ -94,6 +94,8 @@ EOF
   }
 }
 
+data "aws_region" "current" {}
+
 resource "aws_spot_fleet_request" "main" {
   iam_fleet_role                      = "${aws_iam_role.fleet.arn}"
   spot_price                          = "${var.spot_prices[0]}"
@@ -118,15 +120,14 @@ resource "aws_spot_fleet_request" "main" {
 
     user_data = <<USER_DATA
 #!/bin/bash
-              
 set -eux
 mkdir -p /etc/ecs
-echo ECS_CLUSTER=${EcsCluster} >> /etc/ecs/ecs.config
+echo ECS_CLUSTER=${aws_ecs_cluster.main.name} >> /etc/ecs/ecs.config
 export PATH=/usr/local/bin:$PATH
 yum -y install jq
 easy_install pip
 pip install awscli
-aws configure set default.region ${AWS::Region}
+aws configure set default.region ${aws_region.current.name}
 
 cat <<EOF > /etc/init/spot-instance-termination-handler.conf
 description "Start spot instance termination handler monitoring script"
