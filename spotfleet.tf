@@ -127,7 +127,7 @@ export PATH=/usr/local/bin:$PATH
 yum -y install jq
 easy_install pip
 pip install awscli
-aws configure set default.region ${aws_region.current.name}
+aws configure set default.region ${data.aws_region.current.name}
 
 cat <<EOF > /etc/init/spot-instance-termination-handler.conf
 description "Start spot instance termination handler monitoring script"
