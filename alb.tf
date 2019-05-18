@@ -2,7 +2,7 @@ resource "aws_security_group" "ecs_alb" {
   description = "Balancer for ${var.app_name}"
 
   vpc_id = "${var.vpc}"
-  name   = "${var.app_name}-alb-sg"
+  name   = "${var.app_name}-${var.environment}-alb-sg"
 
   ingress {
     protocol    = "tcp"
@@ -25,7 +25,7 @@ resource "aws_security_group" "ecs_alb" {
 }
 
 resource "aws_alb" "main" {
-  name            = "${var.app_name}"
+  name            = "${var.app_name}-${var.environment}"
   subnets         = ["${var.subnet_a}", "${var.subnet_b}"]
   security_groups = ["${aws_security_group.ecs_alb.id}"]
 
@@ -36,7 +36,7 @@ resource "aws_alb" "main" {
 }
 
 resource "aws_alb_target_group" "main" {
-  name     = "${var.app_name}"
+  name     = "${var.app_name}-${var.environment}"
   port     = "${var.app_port}"
   protocol = "HTTP"
   vpc_id   = "${var.vpc}"
